@@ -1,0 +1,140 @@
+Universidade do Sul de Santa Catarina – UNISUL  
+Unidade Curricular: Sistemas Distribuídos e Mobile  
+Professor: Fernando Costa Leite  
+ 
+ 
+ 
+A3 – Desempenho de Compreensão  
+ 
+ 
+Título:  
+Desenvolvimento de um Sistema Distribuído de Venda de Ingressos Online  
+  
+Objetivo Geral  
+Desenvolver um sistema distribuído para venda de ingressos online, aplicando os conceitos 
+estudados na disciplina, com foco em arquitetura distribuída, escalabilidade, resiliência e 
+observabilidade.  
+O trabalho tem como objetivo aproximar os alunos de cenários reais de mercado, exigindo 
+tomada de decisão arquitetural e tratamento de problemas típicos de sistemas distribuídos.  
+  
+Descrição do Sistema  
+O sistema deverá possuir dois perfis de usuário: Administrador e Usuário Final.  
+Perfil Administrador  
+i. Criar  eventos para venda de ingressos contendo:  
+a. Nome do evento  
+b. Data  
+c. Valor  
+d. Quantidade disponível  
+ii. Alterar a quantidade de ingressos disponíveis  
+iii. Alterar o preço dos eventos  
+Perfil Usuário  
+i. Realizar cadastro no sistema  
+ii. Comprar ingressos selecionando uma das opções:  
+a. Boleto bancário  
+b. PIX 
+c. Cartão de crédito  
+Requisitos Técnicos Obrigatórios  
+O sistema desenvolvido deverá obrigatoriamente conter:  
+i. Um balanceador de carga  
+ii. Um API Gateway  
+iii. Um banco de dados  
+iv. Mais de um serviço/microsserviço e rodando mais de uma instância  
+v. Um mecanismo de comunicação assíncrona (definido pela equipe)  
+vi. Implementação de observabilidade, incluindo pelo menos:  
+a. Logs estruturados  
+b. Métricas (ex: latência, erros, throughput)  
+c. (Opcional) tracing distribuído  
+Requisitos Avançados (Obrigatórios)  
+Além dos requisitos técnicos, o sistema deverá contemplar:  
+i. Controle de Concorrência : O sistema deve garantir que não ocorra venda de 
+ingressos acima da quantidade disponível (overselling), mesmo em cenários com 
+múltiplas requisições simultâneas.  
+ii. Resiliência a Falhas : O sistema deve prever falhas de comunicação entre serviços, 
+apresentando comportamento resiliente (ex: retries, tratamento de erro, fallback, 
+etc.).  
+iii. Idempotência : Operações críticas, como a compra de ingressos, devem ser 
+projetadas para evitar duplicidade em cenários de retry ou falhas de rede.  
+  
+Integrações  
+i. A comunicação com gateways de pagamento deve ser mockada (stubs/simulações).  
+ii. O envio de e -mails também deve ser simulado.  
+ 
+Entregáveis   
+Os grupos deverão entregar:  
+1. Relatório Técnico  
+O relatório deve conter:  
+i. Descrição da arquitetura do sistema  
+ii. Justificativa das decisões arquiteturais  
+iii. Tecnologias utilizadas  
+iv. Pontos de atenção e limitações  
+v. Descrição de como os requisitos distribuídos foram atendidos  
+2. Repositório Git  
+Link do GitHub contendo o(s) projeto(s)  
+i. O repositório será avaliado quanto à organização e histórico de desenvolvimento  
+3. Apresentação  
+A apresentação deverá ser dividida em duas partes:  
+Parte 1 – Teórica  
+i. Explicação das decisões arquiteturais  
+ii. Justificativa das escolhas tecnológicas  
+iii. Discussão dos desafios enfrentados  
+Parte 2 – Prática  
+i. Demonstração do sistema em funcionamento  
+  
+Observação:  
+i. Não é obrigatório desenvolver frontend.  
+ii. Caso não haja interface gráfica, a demonstração deverá ser realizada utilizando 
+ferramentas como:  
+a. Curl 
+b. Postman  
+c. Insomnia  
+iii. É de livre escolha do grupo a(s) linguagem(ns) de programação para o 
+desenvolvimento dos serviços  
+iv. Serviços como load balancer e API gateway, por exemplo, não precisam ser 
+construídos, devem ser usados os já existentes  
+v. O uso da AWS não é obrigatório, sendo permitido aos grupos rodar a aplicação 
+localmente por meio de docker -compose ou outra ferramenta  
+vi. Commits no git  serão considerados individualmente, assim como os pontos por 
+apresentação  
+ 
+Critérios de Avaliação  
+i. Arquitetura (4 pontos)  
+a. Desacoplamento entre serviços  
+b. Escalabilidade da solução  
+c. Resiliência a falhas  
+d. Qualidade das decisões arquiteturais  
+e. Uso adequado de padrões de sistemas distribuídos  
+ii. Git (3 pontos)  
+a. Frequência de commits  
+b. Clareza das mensagens  
+c. Organização do repositório  (incluíndo fluxo do trabalho em branchs, etc)  
+d. Evolução consistente do projeto  
+iii. Apresentação (3 pontos)  
+a. Clareza e organização  
+b. Capacidade de justificar decisões técnicas  
+c. Domínio do conteúdo  
+d. Demonstração funcional do sistema  
+iv. Pontuação Extra  
+a. Alunos que concluírem o curso de AWS disponibilizado pelo professor 
+poderão receber pontuação extra na nota final.  
+b. Alunos que não receberam o e -mail devem entrar em contato com o 
+professor o mais rápido possível.  
+  
+Formação das Equipes  
+i. Máximo de 5 integrantes por grupo  
+ii. Mínimo de 3 integrantes por grupo  
+ 
+Acompanhamento   
+Durante as aulas, haverá momentos de acompanhamento do projeto.  
+O progresso dos grupos poderá ser considerado na avaliação.  
+  
+Observação Final  
+Este trabalho tem como objetivo simular desafios reais de desenvolvimento de sistemas 
+distribuídos.  
+As decisões tomadas pela equipe serão tão importantes quanto a implementação.  
+A permanência em sala durante as apresentações será computado na avaliação.  
+ 
+Datas de entregas:  
+ 
+Entrega dos materiais no ulife (relatório, link do repositório  e apresentação) : 08 de 
+junho de 2026.   
+Data apresentação: 15 de junho de 2026.  
