@@ -7,22 +7,25 @@ from core.config import settings
 security = HTTPBearer()
 
 class TokenData(BaseModel):
-    email: str
+    user_id: str
     is_admin: bool
 
 def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> TokenData:
     token = credentials.credentials
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        email: str = payload.get("sub")
-        is_admin: bool = payload.get("is_admin", False)
-        if email is None:
+        user_id: str = payload.get("sub")
+        role: str = payload.get("role", "user")
+        
+        if user_id is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Could not validate credentials",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-        return TokenData(email=email, is_admin=is_admin)
+            
+        is_admin = (role == "admin")
+        return TokenData(user_id=user_id, is_admin=is_admin)
     except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

@@ -22,3 +22,11 @@ class EventResponse(EventBase):
 
     class Config:
         from_attributes = True
+
+class EventReserveRequest(BaseModel):
+    quantity: int = Field(..., gt=0, description="Quantidade de ingressos para reservar")
+
+class EventReserveResponse(BaseModel):
+    message: str
+    event_id: int
+    reserved_quantity: int

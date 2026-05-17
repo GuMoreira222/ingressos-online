@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: ingressos_postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  auth:
+    build:
+      context: ./auth
+    container_name: ingressos_auth
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./auth/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  events:
+    build:
+      context: ./events
+    container_name: ingressos_events
+    ports:
+      - "8001:8001"
+    env_file:
+      - ./events/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
