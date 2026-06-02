@@ -5,7 +5,7 @@ from core.config import settings
 
 class PaymentClient:
     def create_payment(self, order_id: int, user_id: str, amount: float, method: str) -> dict:
-        url = f"{settings.PAYMENTS_SERVICE_URL}/payments"
+        url = f"{settings.PAYMENTS_SERVICE_URL}/payments/"
         try:
             response = httpx.post(
                 url,

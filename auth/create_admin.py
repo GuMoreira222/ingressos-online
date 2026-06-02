@@ -8,8 +8,10 @@ from db.database import SessionLocal, engine
 from models.user import User, RoleEnum, Base
 from core.security import get_password_hash
 
-# Garantir que a tabela existe antes de inserir
-Base.metadata.create_all(bind=engine)
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as e:
+    print(f"Database tables already initialized or being initialized in create_admin: {e}")
 
 def create_admin():
     email = os.getenv("USER_ADMIN")
