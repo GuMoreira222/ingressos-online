@@ -25,11 +25,10 @@ services:
   auth:
     build:
       context: ./auth
-    container_name: ingressos_auth
-    ports:
-      - "8000:8000"
     env_file:
       - ./auth/.env
+    deploy:
+      replicas: 2
     depends_on:
       postgres:
         condition: service_healthy
@@ -37,11 +36,10 @@ services:
   events:
     build:
       context: ./events
-    container_name: ingressos_events
-    ports:
-      - "8001:8001"
     env_file:
       - ./events/.env
+    deploy:
+      replicas: 2
     depends_on:
       postgres:
         condition: service_healthy
@@ -49,11 +47,10 @@ services:
   orders:
     build:
       context: ./orders
-    container_name: ingressos_orders
-    ports:
-      - "8002:8002"
     env_file:
       - ./orders/.env
+    deploy:
+      replicas: 2
     depends_on:
       postgres:
         condition: service_healthy
@@ -65,16 +62,43 @@ services:
   payments:
     build:
       context: ./payments
-    container_name: ingressos_payments
-    ports:
-      - "8003:8003"
     env_file:
       - ./payments/.env
+    deploy:
+      replicas: 2
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_started
+
+  nginx:
+    image: nginx:alpine
+    container_name: ingressos_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - auth
+      - events
+      - orders
+      - payments
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ingressos_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - auth
+      - events
+      - orders
+      - payments
+
+
 
 volumes:
   postgres_data:

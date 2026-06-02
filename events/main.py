@@ -8,7 +8,10 @@ from api.routes import router as event_router
 
 logger = get_logger()
 
-Base.metadata.create_all(bind=engine)
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as e:
+    logger.warning(f"Database tables already initialized or being initialized: {e}")
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
