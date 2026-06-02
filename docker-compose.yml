@@ -16,6 +16,12 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7
+    container_name: ingressos_redis
+    ports:
+      - "6379:6379"
+
   auth:
     build:
       context: ./auth
@@ -39,6 +45,36 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  orders:
+    build:
+      context: ./orders
+    container_name: ingressos_orders
+    ports:
+      - "8002:8002"
+    env_file:
+      - ./orders/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      events:
+        condition: service_started
+      payments:
+        condition: service_started
+
+  payments:
+    build:
+      context: ./payments
+    container_name: ingressos_payments
+    ports:
+      - "8003:8003"
+    env_file:
+      - ./payments/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
 volumes:
   postgres_data:
