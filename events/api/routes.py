@@ -68,12 +68,17 @@ def reserve_tickets(
 ):
     # 1. Verificar idempotência
     existing_key = db.query(IdempotencyKey).filter(IdempotencyKey.key == idempotency_key).first()
+    existing_event = db.query(Event).filter(Event.id == event_id).first()
     if existing_key:
+        if not existing_event:
+            raise HTTPException(status_code=404, detail="Event not found")
+        existing_total_amount = existing_event.price * reserve_data.quantity
         # Se a chave já foi processada, retorna sucesso (simulando que a transação foi aceita)
         return EventReserveResponse(
             message="Reserva já processada anteriormente (Idempotency).",
             event_id=event_id,
-            reserved_quantity=reserve_data.quantity
+            reserved_quantity=reserve_data.quantity,
+            total_amount=existing_total_amount
         )
 
     # 2. Lock no Evento para evitar overselling (with_for_update)
@@ -87,7 +92,9 @@ def reserve_tickets(
             status_code=status.HTTP_409_CONFLICT, 
             detail=f"Estoque insuficiente. Disponível: {db_event.available_quantity}"
         )
-        
+    
+    total_amount = db_event.price * reserve_data.quantity
+
     # 3. Abater a quantidade
     db_event.available_quantity -= reserve_data.quantity
     
@@ -104,11 +111,13 @@ def reserve_tickets(
         return EventReserveResponse(
             message="Reserva já processada anteriormente (Idempotency - Fallback).",
             event_id=event_id,
-            reserved_quantity=reserve_data.quantity
+            reserved_quantity=reserve_data.quantity,
+            total_amount=total_amount
         )
         
     return EventReserveResponse(
         message="Reserva realizada com sucesso.",
         event_id=event_id,
-        reserved_quantity=reserve_data.quantity
+        reserved_quantity=reserve_data.quantity,
+        total_amount=total_amount
     )

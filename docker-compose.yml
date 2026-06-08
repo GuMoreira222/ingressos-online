@@ -59,6 +59,18 @@ services:
       payments:
         condition: service_started
 
+  orders-worker:
+    build:
+      context: ./orders
+    env_file:
+      - ./orders/.env
+    command: ["python", "worker.py"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
   payments:
     build:
       context: ./payments

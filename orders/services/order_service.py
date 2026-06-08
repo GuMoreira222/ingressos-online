@@ -39,7 +39,7 @@ class OrderService:
         db.refresh(order)
 
         try:
-            self.event_client.reserve(
+            reservation = self.event_client.reserve(
                 event_id=order.event_id,
                 quantity=order.quantity,
                 idempotency_key=f"order-{order.id}-{idempotency_key}",
@@ -48,11 +48,10 @@ class OrderService:
             db.commit()
             db.refresh(order)
 
-            # Event price is not exposed yet, so amount mirrors quantity for now.
             payment = self.payment_client.create_payment(
                 order_id=order.id,
                 user_id=order.user_id,
-                amount=float(order.quantity),
+                amount=reservation["total_amount"],
                 method=order.payment_method.value,
             )
             order.payment_id = payment["id"]
