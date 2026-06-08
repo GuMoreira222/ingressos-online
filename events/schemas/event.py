@@ -30,3 +30,4 @@ class EventReserveResponse(BaseModel):
     message: str
     event_id: int
     reserved_quantity: int
+    total_amount: float
