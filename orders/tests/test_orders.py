@@ -15,16 +15,18 @@ class FakeEventClient:
         self.calls += 1
         if self.should_fail:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Estoque insuficiente")
-        return {"event_id": event_id, "reserved_quantity": quantity}
+        return {"event_id": event_id, "reserved_quantity": quantity, "total_amount": quantity * 100.0}
 
 
 class FakePaymentClient:
     def __init__(self, payment_status="approved"):
         self.payment_status = payment_status
         self.calls = 0
+        self.amount = None
 
     def create_payment(self, order_id: int, user_id: str, amount: float, method: str) -> dict:
         self.calls += 1
+        self.amount = amount
         return {"id": 99, "status": self.payment_status}
 
 
@@ -44,6 +46,7 @@ def test_create_order_success(db_session):
     assert order.payment_id == 99
     assert event_client.calls == 1
     assert payment_client.calls == 1
+    assert payment_client.amount == 200.0
 
 
 def test_create_order_idempotency_returns_same_order(db_session):

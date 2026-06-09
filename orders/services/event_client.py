@@ -1,18 +1,23 @@
 import httpx
 from fastapi import HTTPException, status
+from tenacity import retry, stop_after_attempt, wait_fixed
 from core.config import settings
 
 
 class EventClient:
+    @retry(stop=stop_after_attempt(3), wait=wait_fixed(2), reraise=True)
+    def _make_request(self, url: str, quantity: int, idempotency_key: str) -> httpx.Response:
+        return httpx.post(
+            url,
+            json={"quantity": quantity},
+            headers={"Idempotency-Key": idempotency_key},
+            timeout=settings.HTTP_TIMEOUT_SECONDS,
+        )
+
     def reserve(self, event_id: int, quantity: int, idempotency_key: str) -> dict:
         url = f"{settings.EVENTS_SERVICE_URL}/events/{event_id}/reserve"
         try:
-            response = httpx.post(
-                url,
-                json={"quantity": quantity},
-                headers={"Idempotency-Key": idempotency_key},
-                timeout=settings.HTTP_TIMEOUT_SECONDS,
-            )
+            response = self._make_request(url, quantity, idempotency_key)
         except httpx.RequestError as exc:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
